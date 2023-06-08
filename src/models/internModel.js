@@ -5,6 +5,7 @@ const internSchema = new mongoose.Schema({
     name : {
         type :String,
         required : true,
+        trim :true
     },
     email : {
         type :String,
@@ -14,6 +15,7 @@ const internSchema = new mongoose.Schema({
     },
     mobile : {
         type : String,
+        trim : true,
         required : true,
         unique : true,
         validation : "should be Valid"
