@@ -1,10 +1,9 @@
 const collegeModel = require("../models/collegeModel");
-const collegeModel = require("../models/collegeModel");
 const internModel = require("../models/internModel");
 const { isValid } = require("../validators/validation");
 
 const createIntern = async (req, res) => {
-  try{const { name, email, mobile, collegeName } = req.body;
+  try{let { name, email, mobile, collegeName } = req.body;
 
   if (
     !isValid(name) ||
@@ -56,7 +55,7 @@ const createIntern = async (req, res) => {
   const college = await collegeModel.findOne({ fullName: collegeName });
 
   if (!college) {
-    res
+ return   res
       .status(404)
       .send({
         status: false,
@@ -64,12 +63,30 @@ const createIntern = async (req, res) => {
       });
   }
 
-    const newIntern = await internModel.create({name, email, mobile, collegeId : college._id}).select({_id:0})
+    const newIntern = await internModel.create({name, email, mobile, collegeId : college._id}) 
 
-   return res.status(201).send({status : true, data : newIntern})
+    const sendInter = await internModel.findById(newIntern._id).select({_id:0,__v:0})
+
+   return res.status(201).send({status : true, data : sendInter})
 
 }catch(err){console.log(err), res.status(500).send({status : err.message})}
 }
 
+const getIntern = async (req,res)=>{
+const query = req.query.collegeName.toLowerCase()
 
-module.exports = {createIntern}
+
+const college = await collegeModel.findOne({name : query}).lean()
+
+const intern = await internModel.find({collegeId:college._id}).select({collegeId:0, isDeleted:0,__v:0})
+delete college._id
+delete college.isDeleted
+delete college.__v
+college.interns = intern
+
+res.status(200).send({status:true, data :college})
+}
+
+
+
+module.exports = {createIntern,getIntern}
