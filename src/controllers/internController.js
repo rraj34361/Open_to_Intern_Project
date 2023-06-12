@@ -17,7 +17,7 @@ const createIntern = async (req, res) => {
   email = email.toLowerCase();
   // Email validation
   
-  if (!validator.email(email)) {
+  if (!validator.isEmail(email)) {
     return res
       .status(400)
       .send({ status: false, message: "Email should be valid email address" });
@@ -78,6 +78,7 @@ try{
    if(!query) return res.status(400).send({status : false, message:"plz give a filter query"})
 query = query.toLowerCase()
 const college = await collegeModel.findOne({name : query}).lean()
+if(!college)  return res.status(404).send({status:false, message:'college not found'})
 
 const intern = await internModel.find({collegeId:college._id}).select({collegeId:0, isDeleted:0,__v:0})
 delete college._id
