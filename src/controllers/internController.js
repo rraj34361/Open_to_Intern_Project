@@ -73,9 +73,10 @@ const createIntern = async (req, res) => {
 }
 
 const getIntern = async (req,res)=>{
-try{const query = req.query.collegeName.toLowerCase()
-
-
+try{
+  let query = req.query.collegeName
+   if(!query) return res.status(400).send({status : false, message:"plz give a filter query"})
+query = query.toLowerCase()
 const college = await collegeModel.findOne({name : query}).lean()
 
 const intern = await internModel.find({collegeId:college._id}).select({collegeId:0, isDeleted:0,__v:0})
