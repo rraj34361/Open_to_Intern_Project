@@ -1,6 +1,6 @@
 const collegeModel = require("../models/collegeModel");
 const { isValid } = require("../validators/validation");
-
+const validator = require('validator')
 const createCollegeDoc = async (req, res) => {
   try {
     const { name, fullName, logoLink } = req.body;
@@ -9,6 +9,12 @@ const createCollegeDoc = async (req, res) => {
       return res.status(400).send({ status: false, message: "Invalid input" });
     }
 
+    if (!validator.isURL(logoLink)) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide a valid logo link"
+      });
+    }
     const collegeName = await collegeModel.findOne({ name });
 
     if (collegeName) {

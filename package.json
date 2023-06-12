@@ -14,7 +14,8 @@
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "mongoose": "^7.2.2",
-    "update": "^0.7.4"
+    "update": "^0.7.4",
+    "validator": "^13.9.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"

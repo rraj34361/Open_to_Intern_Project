@@ -1,7 +1,7 @@
 const collegeModel = require("../models/collegeModel");
 const internModel = require("../models/internModel");
 const { isValid } = require("../validators/validation");
-
+const validator = require('validator')
 const createIntern = async (req, res) => {
   try{let { name, email, mobile, collegeName } = req.body;
 
@@ -16,7 +16,8 @@ const createIntern = async (req, res) => {
 
   email = email.toLowerCase();
   // Email validation
-  if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+  
+  if (!validator.email(email)) {
     return res
       .status(400)
       .send({ status: false, message: "Email should be valid email address" });
@@ -33,9 +34,8 @@ const createIntern = async (req, res) => {
   // validating number
   mobile = mobile.trim();
 
-  const phonePattern = /^[6789]\d{9}$/;
 
-  if (!phonePattern.test(mobile)) {
+  if (!validator.isMobilePhone(mobile)) {
     return res
       .status(400)
       .send({ status: false, message: "plz give a correct number" });
@@ -52,7 +52,7 @@ const createIntern = async (req, res) => {
       });
   }
   collegeName = collegeName.trim();
-  const college = await collegeModel.findOne({ fullName: collegeName });
+  const college = await collegeModel.findOne({ name: collegeName });
 
   if (!college) {
  return   res
@@ -69,11 +69,11 @@ const createIntern = async (req, res) => {
 
    return res.status(201).send({status : true, data : sendInter})
 
-}catch(err){console.log(err), res.status(500).send({status : err.message})}
+}catch(err){console.log(err), res.status(500).send({status :false , message: err.message})}
 }
 
 const getIntern = async (req,res)=>{
-const query = req.query.collegeName.toLowerCase()
+try{const query = req.query.collegeName.toLowerCase()
 
 
 const college = await collegeModel.findOne({name : query}).lean()
@@ -85,8 +85,10 @@ delete college.__v
 college.interns = intern
 
 res.status(200).send({status:true, data :college})
+}catch(err){
+  console.log(err) , res.status(500).send({status:false, message:err.message})
 }
-
+}
 
 
 module.exports = {createIntern,getIntern}
