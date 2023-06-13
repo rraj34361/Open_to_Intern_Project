@@ -75,7 +75,7 @@ const createIntern = async (req, res) => {
 const getIntern = async (req,res)=>{
 try{
   let query = req.query.collegeName
-   if(!query) return res.status(400).send({status : false, message:"plz give a filter query"})
+   if(!query) return res.status(404).send({status : false, message:"plz give a filter query"})
 query = query.toLowerCase()
 const college = await collegeModel.findOne({name : query}).lean()
 if(!college)  return res.status(404).send({status:false, message:'college not found'})
